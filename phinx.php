@@ -2,21 +2,22 @@
 
 return [
     'paths' => [
-        'migrations' => __DIR__ . '/database/migrations',
-        'seeds' => __DIR__ . '/database/seeds',
+        'migrations' => '%%PHINX_CONFIG_DIR%%/src/Infrastructure/Database/Migrations',
+        'seeds' => '%%PHINX_CONFIG_DIR%%/src/Infrastructure/Database/Seeds'
     ],
     'environments' => [
         'default_migration_table' => 'phinxlog',
         'default_environment' => 'development',
         'development' => [
-            'adapter' => getenv('DB_ADAPTER') ?: 'pgsql',
-            'host' => getenv('DB_HOST') ?: '127.0.0.1',
-            'name' => getenv('DB_DATABASE') ?: 'your_database',
-            'user' => getenv('DB_USERNAME') ?: 'your_user',
-            'pass' => getenv('DB_PASSWORD') ?: 'your_password',
-            'port' => getenv('DB_PORT') ?: '5432',
+            'adapter' => getenv('DB_DRIVER') ?: 'mysql',
+            'host' => getenv('DB_HOST') ?: 'localhost',
+            'name' => getenv('DB_NAME') ?: 'agendapro',
+            'user' => getenv('DB_USER') ?: 'root',
+            'pass' => getenv('DB_PASSWORD') ?: 'root',
+            'port' => getenv('DB_PORT') ?: '8889',
             'charset' => 'utf8',
-        ],
+        ]
+
     ],
     'version_order' => 'creation'
 ];
