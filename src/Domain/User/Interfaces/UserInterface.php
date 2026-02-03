@@ -7,5 +7,5 @@ use App\Domain\User\Requests\LoginUserRequest;
 interface UserInterface
 {
     public function findByEmail(string $email): ?UserEntity;
-    public function save(UserEntity $user): void;
+    public function save(UserEntity $user, ?string $verificationCode = null): void;
 }

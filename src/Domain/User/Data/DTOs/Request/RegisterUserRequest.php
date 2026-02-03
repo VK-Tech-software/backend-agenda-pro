@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Data\DTOs\Request;
 
+use Doctrine\DBAL\Exception\InvalidArgumentException;
+
 final class RegisterUserRequest
 {
     public function __construct(
@@ -29,14 +31,6 @@ final class RegisterUserRequest
         if (strlen($this->password) < 6) {
             throw new InvalidArgumentException('Senha deve ter no mínimo 6 caracteres.');
         }
-
-        if (!in_array($this->tipoConta, ['cliente', 'profissional'], true)) {
-            throw new InvalidArgumentException('Tipo de conta inválido.');
-        }
-
-        if (strlen(preg_replace('/\D/', '', $this->telefone)) < 10) {
-            throw new InvalidArgumentException('Telefone inválido.');
-        }
     }
 
     public static function fromArray(array $data): self
@@ -46,8 +40,8 @@ final class RegisterUserRequest
             $data['email'] ?? '',
             $data['password'] ?? '',
             $data['cnpjcpf'] ?? '',
-            $data['tipoConta'] ?? '',
-            $data['telefone'] ?? ''
+            $data['role'] ?? '',
+            $data['phone'] ?? ''
         );
     }
 

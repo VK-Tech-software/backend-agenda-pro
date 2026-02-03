@@ -10,7 +10,7 @@ return [
         'default_environment' => 'development',
         'development' => [
             'adapter' => getenv('DB_DRIVER') ?: 'mysql',
-            'host' => getenv('DB_HOST') ?: 'localhost',
+            'host' => getenv('DB_HOST') ?: '127.0.0.1',
             'name' => getenv('DB_NAME') ?: 'agendapro',
             'user' => getenv('DB_USER') ?: 'root',
             'pass' => getenv('DB_PASSWORD') ?: 'root',

@@ -32,17 +32,22 @@ class DoctrineUserRepository implements UserInterface
             tipoConta: 'PF',
             telefone: '',
             active: true,
+            zipCode: $orm->getVerificationCode() ?? '',
             createdAt: $orm->getCreatedAt()
         );
     }
 
-    public function save(UserEntity $user): void
+    public function save(UserEntity $user, ?string $verificationCode = null): void
     {
         $orm = new UserOrm(
             $user->name(),
             $user->email(),
             $user->passwordHash()
         );
+
+        if ($verificationCode !== null) {
+            $orm->setVerificationCode($verificationCode);
+        }
 
         $this->em->persist($orm);
         $this->em->flush();

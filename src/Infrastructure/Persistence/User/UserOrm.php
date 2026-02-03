@@ -30,6 +30,9 @@ class UserOrm
     #[ORM\Column(name: 'updated_at', type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(name: 'verification_code', type: 'string', length: 50, nullable: true)]
+    private ?string $verificationCode = null;
+
     public function __construct(string $name, string $email, string $password)
     {
         $this->name = $name;
@@ -71,5 +74,15 @@ class UserOrm
     public function setUpdatedAt(?\DateTimeImmutable $dt): void
     {
         $this->updatedAt = $dt;
+    }
+
+    public function getVerificationCode(): ?string
+    {
+        return $this->verificationCode;
+    }
+
+    public function setVerificationCode(?string $code): void
+    {
+        $this->verificationCode = $code;
     }
 }

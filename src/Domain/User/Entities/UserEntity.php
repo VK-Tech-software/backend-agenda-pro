@@ -14,6 +14,7 @@ final class UserEntity
         private string $tipoConta,
         private string $telefone,
         private bool $active,
+        private string $zipCode,
         private DateTimeImmutable $createdAt
     ) {
         $this->changeName(name: $name);
@@ -25,7 +26,8 @@ final class UserEntity
         string $email,
         string $plainPassword,
         string $tipoConta,
-        string $telefone
+        string $telefone,
+        string $zipCode
     ): self {
 
         return new self(
@@ -35,6 +37,7 @@ final class UserEntity
             passwordHash: password_hash($plainPassword, PASSWORD_DEFAULT),
             tipoConta: $tipoConta,
             telefone: $telefone,
+            zipCode: $zipCode,
             active: true,
             createdAt: new \DateTimeImmutable()
         );
@@ -47,18 +50,20 @@ final class UserEntity
         string $passwordHash,
         string $tipoConta,
         string $telefone,
+        string $zipCode,
         bool $active,
         DateTimeImmutable $createdAt
     ): self {
         return new self(
-            $id,
-            $name,
-            $email,
-            $passwordHash,
-            $tipoConta,
-            $telefone,
-            $active,
-            $createdAt
+            id: $id,
+            name: $name,
+            email: $email,
+            passwordHash: $passwordHash,
+            tipoConta: $tipoConta,
+            telefone: $telefone,
+            active: $active,
+            zipCode: $zipCode,
+            createdAt: $createdAt
         );
     }
 
@@ -86,6 +91,7 @@ final class UserEntity
     public function passwordHash(): string { return $this->passwordHash; }
     public function tipoConta(): string { return $this->tipoConta; }
     public function telefone(): string { return $this->telefone; }
+    public function zipCode(): string { return $this->zipCode; }
     public function isActive(): bool { return $this->active; }
     public function createdAt(): DateTimeImmutable { return $this->createdAt; }
 }
