@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Actions\Companys\List\CompanyListUserIdAction;
+use App\Application\Actions\Companys\Register\CompanyRegisterAction;
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
 use App\Application\Actions\Auth\RegisterAction;
@@ -44,11 +46,11 @@ return function (App $app) {
 
     $app->group('/companies', function (Group $group) {
         $group->get('', ListCompaniesAction::class);
-        $group->post('', RegisterCompanyAction::class);
+        $group->post('', CompanyRegisterAction::class);
         $group->get('/{id}', ViewCompanyAction::class);
         $group->put('/{id}', UpdateCompanyAction::class);
         $group->patch('/{id}/inactivate', DeactivateCompanyAction::class);
-        $group->get('/user/{userId}', GetCompanyByUserAction::class);
+        $group->get('/user/{userId}', CompanyListUserIdAction::class);
     });
 
     $app->group('/products', function (Group $group) {
