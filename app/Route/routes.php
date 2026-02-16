@@ -37,6 +37,7 @@ use App\Application\Actions\User\ViewUserAction;
 use App\Application\Actions\Auth\RegisterAction;
 use App\Application\Middleware\AuthMiddleware;
 use App\Application\Middleware\RoleMiddleware;
+use App\Application\Middleware\PlanLimitMiddleware;
 use App\Domain\User\Repositories\UserRepository;
 use App\Application\Actions\Permissions\List\PermissionListAction;
 use App\Application\Actions\Profissionals\Permissions\ProfissionalPermissionsGetAction;
@@ -60,6 +61,10 @@ use App\Application\Actions\Cases\List\CaseListByIdAction;
 use App\Application\Actions\Cases\Register\CaseRegisterAction;
 use App\Application\Actions\Cases\Update\CaseUpdateAction;
 use App\Application\Actions\Cases\Delete\CaseDeleteAction;
+use App\Application\Actions\Billing\CreateCheckoutSessionAction;
+use App\Application\Actions\Billing\StripeWebhookAction;
+use App\Application\Actions\Billing\CompanyPlanStatusAction;
+use App\Application\Actions\Billing\BillingUsageAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -135,7 +140,7 @@ return function (App $app) {
 
     $app->group('/appointment', function (Group $group) {
         $group->get('', AgendamentoListAction::class);
-        $group->post('', AgendamentoRegisterAction::class);
+        $group->post('', AgendamentoRegisterAction::class)->add(PlanLimitMiddleware::class);
         $group->get('/{id}', AgendamentoListByIdAction::class);
         $group->put('/{id}', AgendamentoUpdateAction::class);
         $group->delete('/{id}', AgendamentoDeleteAction::class);
@@ -171,6 +176,16 @@ return function (App $app) {
     $app->group('/notifications', function (Group $group) {
         $group->get('', NotificationListAction::class);
     })->add(AuthMiddleware::class);
+
+    $app->group('/billing', function (Group $group) {
+        $group->post('/checkout', CreateCheckoutSessionAction::class);
+        $group->get('/status', CompanyPlanStatusAction::class);
+        $group->get('/usage', BillingUsageAction::class);
+    })->add(AuthMiddleware::class);
+
+    $app->group('/billing', function (Group $group) {
+        $group->post('/webhook', StripeWebhookAction::class);
+    });
 
     $app->group('/cases', function (Group $group) {
         $group->get('', CaseListAction::class);

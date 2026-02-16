@@ -19,6 +19,7 @@ use App\Domain\Settings\Repositories\SettingsRepository;
 use App\Domain\Dashboard\Repositories\DashboardRepository;
 use App\Domain\StockMovements\Repositories\StockMovementRepository;
 use App\Domain\Cases\Repositories\CaseRepository;
+use App\Domain\CompanyPlan\Repositories\CompanyPlanRepository;
 use DI\ContainerBuilder;
 use function DI\autowire;
 use function DI\get;
@@ -74,6 +75,9 @@ return function (ContainerBuilder $containerBuilder) {
             ->constructorParameter('connection', get('db.agendapro')),
 
         CaseRepository::class => autowire()
+            ->constructorParameter('connection', get('db.agendapro')),
+
+        CompanyPlanRepository::class => autowire()
             ->constructorParameter('connection', get('db.agendapro')),
 
     ]);

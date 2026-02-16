@@ -106,4 +106,14 @@ final class AgendamentoRepository implements AgendamentoInterface
 
         return $count > 0;
     }
+
+    public function countByCompanyAndPeriod(int $companyId, string $startDate, string $endDate): int
+    {
+        return (int) $this->connection->table('appointments')
+            ->join('appointment_status', 'appointments.id', '=', 'appointment_status.appointment_id')
+            ->where('appointments.company_id', $companyId)
+            ->where('appointment_status.status', '!=', 'Cancelado')
+            ->whereBetween('appointments.start_at', [$startDate, $endDate])
+            ->count();
+    }
 }

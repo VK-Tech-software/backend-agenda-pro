@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use DI\ContainerBuilder;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 return function (ContainerBuilder $containerBuilder) {
 
@@ -18,6 +21,17 @@ return function (ContainerBuilder $containerBuilder) {
         (require $path)($containerBuilder);
     }
     $containerBuilder->addDefinitions([
+
+        LoggerInterface::class => function () {
+            $logPath = __DIR__ . '/../../var/logs/app.log';
+            $logDir = dirname($logPath);
+            if (!is_dir($logDir)) {
+                mkdir($logDir, 0777, true);
+            }
+            $logger = new Logger('app');
+            $logger->pushHandler(new StreamHandler($logPath, Logger::DEBUG));
+            return $logger;
+        },
 
         \App\Domain\Shared\Interfaces\MailerInterface::class => function (ContainerInterface $c) {
             $mailConfig = $c->get(\App\Infrastructure\Mail\MailConfig::class);
@@ -48,6 +62,14 @@ return function (ContainerBuilder $containerBuilder) {
             );
 
             return $dispatcher;
+        },
+
+        \App\Application\Middleware\PlanLimitMiddleware::class => function (ContainerInterface $c) {
+            return new \App\Application\Middleware\PlanLimitMiddleware(
+                $c->get(\App\Domain\Company\Repositories\CompanyRepository::class),
+                $c->get(\App\Domain\CompanyPlan\Repositories\CompanyPlanRepository::class),
+                $c->get(\App\Domain\Agendamentos\Repositories\AgendamentoRepository::class)
+            );
         },
     ]);
 };
