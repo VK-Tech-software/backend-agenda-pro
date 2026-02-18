@@ -11,14 +11,24 @@ class ClientService
   {
   }
 
-  public function register(ClientRequest $client): bool
+  public function registerForCompany(ClientRequest $client, int $companyId): int
   {
-    $client = ClientEntity::create(
+    $entity = ClientEntity::create(
       name: $client->name,
       phone: $client->phone,
       origem: $client->origem
     );
-    return $this->repository->register(client: $client);
+
+    $existing = $this->repository->findByPhoneAndCompany($entity->getPhone(), $companyId);
+    if ($existing) return (int) ($existing['id'] ?? 0);
+    
+
+    return $this->repository->register(
+      name: $entity->getName(),
+      phone: $entity->getPhone(),
+      origem: $entity->getOrigem(),
+      companyId: $companyId
+    );
   }
 
   public function update(ClientRequest $client, int $id): bool

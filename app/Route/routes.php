@@ -38,6 +38,7 @@ use App\Application\Actions\Auth\RegisterAction;
 use App\Application\Middleware\AuthMiddleware;
 use App\Application\Middleware\RoleMiddleware;
 use App\Application\Middleware\PlanLimitMiddleware;
+use App\Application\Middleware\ProfessionalLimitMiddleware;
 use App\Domain\User\Repositories\UserRepository;
 use App\Application\Actions\Permissions\List\PermissionListAction;
 use App\Application\Actions\Profissionals\Permissions\ProfissionalPermissionsGetAction;
@@ -56,6 +57,7 @@ use App\Application\Actions\AppointmentRequests\Approve\AppointmentRequestApprov
 use App\Application\Actions\AppointmentRequests\Reject\AppointmentRequestRejectAction;
 use App\Application\Actions\AppointmentRequests\Public\AppointmentRequestPublicAvailabilityAction;
 use App\Application\Actions\Public\Company\PublicCompanyInfoAction;
+use App\Application\Actions\Public\Company\PublicCompanyListAction;
 use App\Application\Actions\Cases\List\CaseListAction;
 use App\Application\Actions\Cases\List\CaseListByIdAction;
 use App\Application\Actions\Cases\Register\CaseRegisterAction;
@@ -122,7 +124,7 @@ return function (App $app) {
 
     $app->group('/profissionals', function (Group $group) use ($container) {
         $group->get('', ProfissionalListAction::class);
-        $group->post('', ProfissionalRegisterAction::class);
+        $group->post('', ProfissionalRegisterAction::class)->add(ProfessionalLimitMiddleware::class);
         $group->get('/{id}', ProfissionalListByIdAction::class);
         $group->put('/{id}', ProfissionalUpdateAction::class);
         $group->delete('/{id}', ProfissionalDeleteAction::class);
@@ -197,5 +199,6 @@ return function (App $app) {
 
     $app->group('/public', function (Group $group) {
         $group->get('/companies/{id}', PublicCompanyInfoAction::class);
+        $group->get('/companies', PublicCompanyListAction::class);
     });
 };

@@ -71,5 +71,13 @@ return function (ContainerBuilder $containerBuilder) {
                 $c->get(\App\Domain\Agendamentos\Repositories\AgendamentoRepository::class)
             );
         },
+
+        \App\Application\Middleware\ProfessionalLimitMiddleware::class => function (ContainerInterface $c) {
+            return new \App\Application\Middleware\ProfessionalLimitMiddleware(
+                $c->get(\App\Domain\Company\Repositories\CompanyRepository::class),
+                $c->get(\App\Domain\CompanyPlan\Repositories\CompanyPlanRepository::class),
+                $c->get(\App\Domain\Profissionals\Repositories\ProfissionalRepository::class)
+            );
+        },
     ]);
 };

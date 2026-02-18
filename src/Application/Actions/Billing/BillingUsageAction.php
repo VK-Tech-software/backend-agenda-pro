@@ -8,6 +8,7 @@ use App\Application\Actions\Action;
 use App\Domain\Company\Repositories\CompanyRepository;
 use App\Domain\CompanyPlan\Repositories\CompanyPlanRepository;
 use App\Domain\Agendamentos\Repositories\AgendamentoRepository;
+use App\Domain\Profissionals\Repositories\ProfissionalRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 
@@ -23,7 +24,8 @@ final class BillingUsageAction extends Action
         LoggerInterface $logger,
         private readonly CompanyRepository $companies,
         private readonly CompanyPlanRepository $plans,
-        private readonly AgendamentoRepository $appointments
+        private readonly AgendamentoRepository $appointments,
+        private readonly ProfissionalRepository $professionals
     ) {
         parent::__construct($logger);
     }
@@ -46,6 +48,7 @@ final class BillingUsageAction extends Action
         $endOfMonth = $now->modify('last day of this month')->format('Y-m-d 23:59:59');
 
         $used = $this->appointments->countByCompanyAndPeriod((int) $companyId, $startOfMonth, $endOfMonth);
+        $proCount = $this->professionals->countByCompanyId((int) $companyId);
 
         return $this->respondWithData([
             'plan' => $planCode,
@@ -53,6 +56,21 @@ final class BillingUsageAction extends Action
             'used' => $used,
             'remaining' => max(0, $limit - $used),
             'percentage' => $limit > 0 ? round(($used / $limit) * 100, 2) : 0,
+            'professionals' => [
+                'limit' => $this->planProfessionalLimit($planCode),
+                'used' => $proCount,
+                'remaining' => max(0, $this->planProfessionalLimit($planCode) - $proCount),
+            ],
         ]);
+    }
+
+    private function planProfessionalLimit(string $planCode): int
+    {
+        return match ($planCode) {
+            'basic' => 2,
+            'medium' => 10,
+            'advanced' => PHP_INT_MAX,
+            default => 0,
+        };
     }
 }

@@ -67,6 +67,14 @@ final class ProfissionalRepository implements ProfissionalInterface
             ->toArray();
     }
 
+    public function countByCompanyId(int $companyId): int
+    {
+        return (int) $this->connection->table('profissionals')
+            ->where('company_id', $companyId)
+            ->where('active', 1)
+            ->count();
+    }
+
     public function find(int $id): ?ProfissionalEntity {
 
         $row = $this->connection->table('profissionals')

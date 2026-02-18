@@ -13,18 +13,9 @@ class ClientRepository implements ClientInterface
         protected Connection $connection,
     ) {}
 
-    public function register(ClientEntity $client): bool
+    public function register(string $name, string $phone, ?string $origem, int $companyId): bool
     {
-        return $this->connection->table('clients')->insert([
-            'name' => $client->getName(),
-            'phone' => $client->getPhone(),
-            'origem' => $client->getOrigem(),
-        ]) > 0;
-    }
-
-    public function registerForCompany(string $name, string $phone, ?string $origem, int $companyId): int
-    {
-        return (int) $this->connection->table('clients')->insertGetId([
+        return $this->connection->table('clients')->insertGetId([
             'tenant_id' => $companyId,
             'company_id' => $companyId,
             'name' => $name,
